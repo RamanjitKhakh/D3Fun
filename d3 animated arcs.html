@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>arcs in d3</title>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+</head>
+<body>
+	
+	<script>
+		var canvas =  d3.select("body").append("svg")
+				.attr("width",1200)
+				.attr("height",1200);
+
+		var group = canvas.append("g").attr("transform","translate(200,200)");
+
+
+		var r = 200;
+		var p = Math.PI*2;	
+		var background = d3.svg.arc().innerRadius(r-30).outerRadius(r).startAngle(0)
+							.endAngle(p);
+		group.append("path").attr("d",background).attr("fill","grey");
+
+
+		//attrTween() was modifying this
+		var arc = d3.svg.arc().innerRadius(r-30).outerRadius(r)
+					.startAngle(0);//by putting a endAngle here the function
+					//will not be able to transistion from the arctween function
+
+
+		//place no length arc on canvas
+		var first = group.append("path").datum({endAngle: 0})
+		.attr("d",arc).attr("fill","blue");		
+
+		var arc2 = d3.svg.arc().innerRadius(r-30).outerRadius(r)
+							.startAngle(p-2);
+
+		
+		//call function which will return intermediate arcs 
+		//second parameter of call is the endpoint
+		
+
+		
+		var second = group.append("path").datum({endAngle: p-2}).attr("d", arc2)
+					.attr("fill","red");
+
+
+		first.transition().duration(700).ease("bounce").call(arcTween,arc, p-2);
+
+
+		second.transition().duration(700).delay(700).ease("bounce")
+		.call(arcTween,arc2,p);
+		//second parameter is the original arc object which will be modified
+		//by the function
+
+
+		//arc2
+		//start of by appending arc to group with the same endAngle as start
+		/*group.append("path").attr("d",arc2.endAngle(arc2.startAngle()))
+		.transition().delay(600)
+		.duration(600).ease("exp")
+		.attr("d",arc2.endAngle(p) )
+		.attr("fill","red");	
+		dont use this type of transistion it does not scale well and an interpolate
+		is cleaner to use
+		*/
+
+
+function arcTween(transition,arcObject, newAngle) {
+
+  // The function passed to attrTween is invoked for each selected element when
+  // the transition starts, and for each element returns the interpolator to use
+  // over the course of transition. This function is thus responsible for
+  // determining the starting angle of the transition (which is pulled from the
+  // element's bound datum, d.endAngle), and the ending angle (simply the
+  // newAngle argument to the enclosing function).
+	console.log("----------------------");
+  transition.attrTween("d", function(d) {
+  	 console.log(d);
+  	
+    // To interpolate between the two angles, we use the default d3.interpolate.
+    // (Internally, this maps to d3.interpolateNumber, since both of the
+    // arguments to d3.interpolate are numbers.) The returned function takes a
+    // single argument t and returns a number between the starting angle and the
+    // ending angle. When t = 0, it returns d.endAngle; when t = 1, it returns
+    // newAngle; and for 0 < t < 1 it returns an angle in-between.
+    //d.endAngle refers to the datum() which was placed in line 29
+    
+
+    var interpolate = d3.interpolate(d.endAngle, newAngle);
+    //our var interpolate is a function which we will call below
+
+    
+
+    // The return value of the attrTween is also a function: the function that
+    // we want to run for each tick of the transition. Because we used
+    // attrTween("d"), the return value of this last function will be set to the
+    // "d" attribute at every tick. (It's also possible to use transition.tween
+    // to run arbitrary code for every tick, say if you want to set multiple
+    // attributes from a single function.) The argument t ranges from 0, at the
+    // start of the transition, to 1, at the end.
+    return function(t) {
+
+      // Calculate the current arc angle based on the transition time, t. Since
+      // the t for the transition and the t for the interpolate both range from
+      // 0 to 1, we can pass t directly to the interpolator.
+      //
+      // Note that the interpolated angle is written into the element's bound
+      // data object! This is important: it means that if the transition were
+      // interrupted, the data bound to the element would still be consistent
+      // with its appearance. Whenever we start a new arc transition, the
+      // correct starting angle can be inferred from the data.
+      d.endAngle = interpolate(t);
+     
+      
+      // Lastly, compute the arc path given the updated data! In effect, this
+      // transition uses data-space interpolation: the data is interpolated
+      // (that is, the end angle) rather than the path string itself.
+      // Interpolating the angles in polar coordinates, rather than the raw path
+      // string, produces valid intermediate arcs during the transition.
+      
+      return arcObject(d);//we modify the function to pass the 
+      //original arc object that 
+    };
+  	});
+
+}
+
+
+
+
+
+
+
+
+	</script>
+</body>
+</html>
