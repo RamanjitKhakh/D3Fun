@@ -19,8 +19,9 @@
 
 		var r = 200;
 		var p = Math.PI*2;	
-		var color = ["blue","red","yellow","green"];
-		var data = [400,500,600,700,78];
+		var color = ["lightgreen","teal","lightsteelblue","yellow","orange","purple","cyan"];
+		var data = [1000,500,600,700,78,1000];
+		
 		var adjusted = pie(data);
 		adjusted = adjusted.sort(function(a,b){return a.startAngle - b.startAngle;});
 		
@@ -39,65 +40,21 @@
 			var first = group.append("path").datum({endAngle: adjusted[i].startAngle})
 			.attr("d",arc)
 			.attr("fill",color[i])
-			.attr("opacity",0.75)
-			.transition()
+			.attr("opacity",0.85);
+			
+			//arc.on("mouseover").text("dfd);
+			
+			first.transition()
 			.duration(700)
 			.ease("bounce")
 			.delay(i*700)
-			.call(arcTween,arc, adjusted[i].endAngle);		
+			.call(arcTween,arc, adjusted[i].endAngle);
+
+			
+
+			
 		}
-	/*
-		//attrTween() was modifying this
-		var arc = d3.svg.arc().innerRadius(r-50).outerRadius(r)
-					.startAngle(adjusted[1].startAngle);//by putting a endAngle here the function
-					//will not be able to transistion from the arctween function
-
-
-		//place no length arc on canvas
-		
-		var arc2 = d3.svg.arc().innerRadius(r-50).outerRadius(r)
-							.startAngle(adjusted[0].startAngle);
-
-		
-		
-		var first = group.append("path").datum({endAngle: adjusted[1].startAngle})
-		.attr("d",arc)
-		.attr("fill",color[1])
-		.transition()
-		.duration(700)
-		.ease("bounce")
-		.call(arcTween,arc, adjusted[1].endAngle);;		
-		//call function which will return intermediate arcs 
-		//second parameter of call is the endpoint
-		
-
-		
-		var second = group.append("path").datum({endAngle: adjusted[0].startAngle})
-					.attr("d", arc2)
-					.attr("fill",color[0])
-					.transition().duration(700).delay(700).ease("bounce")
-					.call(arcTween,arc2,adjusted[0].endAngle);
-
-
-		//first.transition().duration(700).ease("bounce").call(arcTween,arc, adjusted[1].endAngle);
-
-
-		//second.transition().duration(700).delay(700).ease("bounce")
-		//.call(arcTween,arc2,adjusted[0].endAngle);
-		//second parameter is the original arc object which will be modified
-		//by the function
-	*/
-
-		//arc2
-		//start of by appending arc to group with the same endAngle as start
-		/*group.append("path").attr("d",arc2.endAngle(arc2.startAngle()))
-		.transition().delay(600)
-		.duration(600).ease("exp")
-		.attr("d",arc2.endAngle(p) )
-		.attr("fill","red");	
-		dont use this type of transistion it does not scale well and an interpolate
-		is cleaner to use
-		*/
+	
 
 
 function arcTween(transition,arcObject, newAngle) {
@@ -108,9 +65,9 @@ function arcTween(transition,arcObject, newAngle) {
   // determining the starting angle of the transition (which is pulled from the
   // element's bound datum, d.endAngle), and the ending angle (simply the
   // newAngle argument to the enclosing function).
-	console.log("----------------------");
+	
   transition.attrTween("d", function(d) {
-  	 console.log(d);
+  	 
   	
     // To interpolate between the two angles, we use the default d3.interpolate.
     // (Internally, this maps to d3.interpolateNumber, since both of the
