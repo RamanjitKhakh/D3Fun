@@ -12,15 +12,26 @@
 				.attr("width",1200)
 				.attr("height",1200);
 
-		var group = canvas.append("g").attr("transform","translate(200,200)");
+		var group = canvas.append("g").attr("transform","translate(300,300)");
+
 		var pie = d3.layout.pie().value(function(d){
 			return d;
 		});
 
+
+		var tooltip = d3.select("body")
+		.append("div")
+		.style("position", "absolute")
+		.style("z-index", "10")
+		.style("visibility", "hidden");
+		
+
+
 		var r = 200;
-		var p = Math.PI*2;	
-		var color = ["lightgreen","teal","lightsteelblue","yellow","orange","purple","cyan"];
-		var data = [1000,500,600,700,78,1000];
+		var p = Math.PI*2;
+		var color = ["#468966","#FFF0A5","#FFB03B","#B64926","#8E2800","#d66170","cyan"];	
+		//var color = ["lightgreen","teal","lightsteelblue","yellow","orange","purple","cyan"];
+		var data = [40,5,25,15,15,10];
 		
 		var adjusted = pie(data);
 		adjusted = adjusted.sort(function(a,b){return a.startAngle - b.startAngle;});
@@ -42,7 +53,7 @@
 			.attr("fill",color[i])
 			.attr("opacity",0.85);
 			
-			//arc.on("mouseover").text("dfd);
+			
 			
 			first.transition()
 			.duration(700)
@@ -53,7 +64,21 @@
 			
 
 			
-		}
+		}//end of for loop
+
+		//for the floating tooltip
+		var guest = d3.selectAll("path");
+		guest.on("mouseover",function(d,i){
+			if(i != 0){
+				//ignore the first grey background donut
+				return tooltip.style("visibility","visible")
+					.text(adjusted[i-1].data+"%");  
+			}
+				})
+		.on("mousemove",function(){
+			return tooltip.style("top", (event.pageY-30)+"px").style("left",(event.pageX+30)+"px");
+		})
+		.on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 	
 
 
