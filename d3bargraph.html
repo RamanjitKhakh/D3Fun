@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>bar graphs</title>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+
+</head>
+<body>
+	<script>
+	var array = [30,40,75];
+	var colors = ["red","blue","green"];
+
+	var width = 1000;
+	var canvas = d3.select("body")
+					.append("svg")
+					.attr("width",width+50)
+					.attr("height",1000)
+					.append("g")
+					.attr("transform","translate(100,40)");
+
+	
+	var scale = d3.scale.linear()
+					.domain([0,100])
+					.range([0,width]);
+					
+	var scale2 = d3.scale.linear().domain([0,3]).range([300,0]);
+	
+	var names = ["hindenburg","titanic", "lusitania"];
+	
+	var xaxis = d3.svg.axis().scale(scale).orient("bottom");
+	var yaxis = d3.svg.axis().scale(scale2).orient("left").ticks(3).tickFormat(function(d,i){if( i == 0){ return "";}else{return names[i-1];}});
+	
+	var bars = canvas.selectAll("rect") //get all rect on page none atm
+					 .data(array)
+					 .enter()//pointer to empty rect container
+					 .append("rect")//add rects to those place holders
+					 .attr("width",function(d){ return 0; })
+					 //the call to function(d) iterates for each entry in array
+					 .attr("height",50)
+					 .attr("y",function(d,i){return i * 100})
+					 //param 1 is the data param 2 is the index 
+					 .attr("fill",function(d,i){return colors[i]})
+					 .attr("fill-opacity", 0.5);
+					 
+	
+	canvas.append("g")
+				.attr("transform","translate(0,300)")
+				.call(xaxis);
+
+	canvas.append("g")
+				.attr("transform", "translate(0,0)")
+				.call(yaxis);
+				
+	var bars = canvas.selectAll("rect").transition()
+				.delay(function(d,i){return 250 * i ;})
+				.duration(500).attr("width",function(d){ return scale(d); });
+	
+	</script>
+</body>
+</html>
