@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Scroll Activated Animation</title>
+		<script src="http://d3js.org/d3.v3.min.js"></script>
+        <style type="text/css">
+            
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                font-family: Raleway, Arial;
+            }
+            
+            .content {
+                height: 400px;
+                background-color: #e0e0e0;
+            }
+            
+            .about {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 100px 0;
+                transform-style: preserve-3d;
+                transform: perspective(800px);
+            }
+            .about h2 {
+                text-transform: uppercase;
+                font-size: 50px;
+                font-weight: 400;
+            }
+            .about h2, .about p {
+                transition: all 0.8s ease;
+            }
+            .about.hidden h2 {
+                opacity: 0;
+                transform: translate3d(0, 0, 400px) rotateY(-40deg);
+            }
+            .about.hidden p {
+                opacity: 0;
+                transform: translate3d(0, 0, 400px) rotateY(40deg);
+            }
+            
+            
+            
+            
+        </style>
+        
+        
+    </head>
+    <body>
+        
+        
+        <div class="content"></div>
+        
+        
+        <div class="about hidden">
+            <h2>This is heading</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum massa ac ex gravida, eu pharetra lorem hendrerit. Praesent sed massa eget massa vehicula volutpat. Donec augue ligula, pretium a congue sit amet, accumsan eget risus. Sed a imperdiet mauris. Proin ac purus at justo cursus ornare id eget elit. Cras a egestas massa. Fusce libero libero, pellentesque id vehicula ut, consectetur at lacus. Vestibulum mollis erat nibh. Fusce tincidunt lectus ut orci feugiat, sit amet scelerisque diam imperdiet. Donec et magna commodo, efficitur velit vel, aliquet enim. Duis nec mollis justo. Duis pulvinar vulputate leo at aliquam.</p>
+        </div>
+    
+        
+        <div class="content"></div>
+        
+
+        
+        
+        
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script type="text/javascript">
+            
+            (function() {
+                
+                var aboutEl = $('div.about'),
+                    aboutElOffset = aboutEl.offset().top/2,
+                    documentEl = $(document);
+                
+                documentEl.on('scroll', function() {
+                    if ( documentEl.scrollTop() > aboutElOffset && aboutEl.hasClass('hidden') ) { 
+
+						console.log("blah");
+						aboutEl.removeClass('hidden'); 
+						
+						
+						var canvas =  d3.select("div.about").append("svg")
+				.attr("width",600)
+				.attr("height",600);
+
+		var group = canvas.append("g").attr("transform","translate(300,300)");
+
+		var pie = d3.layout.pie().value(function(d){
+			return d;
+		});
+
+
+		var tooltip = d3.select("body")
+		.append("div")
+		.style("position", "absolute")
+		.style("z-index", "10")
+		.style("visibility", "hidden")
+		.style("background","lightgrey")
+		.style("font-size","25px")
+		.style("border-style","solid")
+		.style("border-width","1px");
+
+
+		var r = 200;
+		var p = Math.PI*2;
+		var color = ["#468966","#FFF0A5","#FFB03B","#B64926","#8E2800","#d66170","cyan"];	
+		//var color = ["lightgreen","teal","lightsteelblue","yellow","orange","purple","cyan"];
+		var data = [40,5,25,15,15,10];
+		
+		var adjusted = pie(data);
+		adjusted = adjusted.sort(function(a,b){return a.startAngle - b.startAngle;});
+		
+		//back ground grey
+		var background = d3.svg.arc().innerRadius(r-50).outerRadius(r).startAngle(0)
+							.endAngle(p);
+							
+		group.append("path").attr("d",background).attr("fill","grey");
+		//end of background
+
+		
+		for(i = 0; i<data.length ; i++){
+			var arc = d3.svg.arc().innerRadius(r-50).outerRadius(r)
+					.startAngle(adjusted[i].startAngle);
+					
+			var first = group.append("path").datum({endAngle: adjusted[i].startAngle})
+			.attr("d",arc)
+			.attr("fill",color[i])
+			.attr("opacity",0.85);
+			
+			
+			
+			first.transition()
+			.duration(700)
+			.ease("bounce")
+			.delay(i*700)
+			.call(arcTween,arc, adjusted[i].endAngle);
+
+			
+
+			
+		}//end of for loop
+
+		//for the floating tooltip
+		var guest = d3.selectAll("path");
+		guest.on("mouseover",function(d,i){
+			if(i != 0){
+				//ignore the first grey background donut
+				return tooltip.style("visibility","visible")
+					.text(adjusted[i-1].data+"%");  
+			}
+				})
+		.on("mousemove",function(){
+			return tooltip.style("top", (event.pageY-30)+"px").style("left",(event.pageX+30)+"px");
+		})
+		.on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+	
+
+
+function arcTween(transition,arcObject, newAngle) {
+
+  // The function passed to attrTween is invoked for each selected element when
+  // the transition starts, and for each element returns the interpolator to use
+  // over the course of transition. This function is thus responsible for
+  // determining the starting angle of the transition (which is pulled from the
+  // element's bound datum, d.endAngle), and the ending angle (simply the
+  // newAngle argument to the enclosing function).
+	
+  transition.attrTween("d", function(d) {
+  	 
+  	
+    // To interpolate between the two angles, we use the default d3.interpolate.
+    // (Internally, this maps to d3.interpolateNumber, since both of the
+    // arguments to d3.interpolate are numbers.) The returned function takes a
+    // single argument t and returns a number between the starting angle and the
+    // ending angle. When t = 0, it returns d.endAngle; when t = 1, it returns
+    // newAngle; and for 0 < t < 1 it returns an angle in-between.
+    //d.endAngle refers to the datum() which was placed in line 29
+    
+
+    var interpolate = d3.interpolate(d.endAngle, newAngle);
+    //our var interpolate is a function which we will call below
+
+    
+
+    // The return value of the attrTween is also a function: the function that
+    // we want to run for each tick of the transition. Because we used
+    // attrTween("d"), the return value of this last function will be set to the
+    // "d" attribute at every tick. (It's also possible to use transition.tween
+    // to run arbitrary code for every tick, say if you want to set multiple
+    // attributes from a single function.) The argument t ranges from 0, at the
+    // start of the transition, to 1, at the end.
+    return function(t) {
+
+      // Calculate the current arc angle based on the transition time, t. Since
+      // the t for the transition and the t for the interpolate both range from
+      // 0 to 1, we can pass t directly to the interpolator.
+      //
+      // Note that the interpolated angle is written into the element's bound
+      // data object! This is important: it means that if the transition were
+      // interrupted, the data bound to the element would still be consistent
+      // with its appearance. Whenever we start a new arc transition, the
+      // correct starting angle can be inferred from the data.
+      d.endAngle = interpolate(t);
+     
+      
+      // Lastly, compute the arc path given the updated data! In effect, this
+      // transition uses data-space interpolation: the data is interpolated
+      // (that is, the end angle) rather than the path string itself.
+      // Interpolating the angles in polar coordinates, rather than the raw path
+      // string, produces valid intermediate arcs during the transition.
+      
+      return arcObject(d);//we modify the function to pass the 
+      //original arc object that 
+    };
+  	});
+
+}
+
+
+
+
+
+
+						
+						
+						
+						
+						
+						
+						
+					}//end of div on center check
+					
+					
+                });//end of documentEl function
+                
+                
+                
+                
+                
+            })();
+            
+            
+            
+        </script>
+        
+    </body>
+</html>
