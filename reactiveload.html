@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Scroll Animation</title>
 		<script src="http://d3js.org/d3.v3.min.js"></script>
+		
         <style type="text/css">
             
             * {
@@ -220,7 +221,9 @@
 							}
 						})
 						.on("mousemove",function(){
-							return tooltip.style("top", (event.pageY-30)+"px").style("left",(event.pageX+30)+"px");
+							 //var event = event || window.event;
+							 
+							return tooltip.style("top", (d3.event.pageY-30)+"px").style("left",(d3.event.pageX+30)+"px");
 						})
 						.on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 					
