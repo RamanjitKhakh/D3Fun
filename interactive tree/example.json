@@ -12,7 +12,13 @@
 		{"name":"keenan",
 		"children":[
 			{"name":"bill"},
-			{"name":"nye"}
+			{"name":"nye",
+			 "children":[
+				{"name":"jack"},
+				{"name":"bill"},
+				{"name":"mason"}
+			 ]
+			}
 		]}
 
 	]

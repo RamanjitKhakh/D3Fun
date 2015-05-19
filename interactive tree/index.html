@@ -42,7 +42,11 @@
 			})
 			.attr("fill","none")
 			.attr("stroke","black")
-			.attr("z-index",-1).transition().duration(1000)
+			.attr("z-index",-1).transition().duration(500)
+			.delay(function(d,i){
+				return (i+1)*500;
+			})
+			.ease("linear")
 			.attr("d",function(d,i){
 				
 				//console.log(t);
