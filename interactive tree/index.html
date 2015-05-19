@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>tree layout</title>
+	<script src= "http://d3js.org/d3.v3.min.js"></script>
+</head>
+<body>
+	<script>
+		var canvas = d3.select("body").append("svg")
+		.attr("width",500).attr("height",500).append("g")
+		.attr("transform","translate(100,100)");
+
+		var tree = d3.layout.tree().size([200,200]);
+		var connect = d3.svg.diagonal();
+		var endpoints = [];
+		d3.json("example.json",function(data){
+
+			var res = tree(data);
+			var paths = tree.links(res);
+			/*
+			canvas.selectAll("path").data(paths).enter()
+			.append("path")
+			.attr("d", connect)
+			.attr("fill","none")
+			.attr("stroke","black")
+			.attr("z-index",-1);
+			*/
+
+			canvas.selectAll("path").data(paths).enter()
+			.append("path")
+			.attr("d", function(d,i){
+				
+				//console.log(t);
+				var p = d;
+				endpoints[i] = p.target;
+				p.target = d.source;
+				console.log(p);
+				//console.log(connect(d));
+				return connect(p);
+				//return connect;
+			})
+			.attr("fill","none")
+			.attr("stroke","black")
+			.attr("z-index",-1).transition().duration(1000)
+			.attr("d",function(d,i){
+				
+				//console.log(t);
+				
+				
+				d.target = endpoints[i];
+				
+				//console.log(connect(d));
+				return connect(d);
+				//return connect;
+			});
+
+
+			canvas.selectAll("node").data(res).enter()
+			.append("circle").attr("class","node")
+			.attr("cx", function(d,i){return res[i].x;})
+			.attr("cy",function(d,i){return res[i].y; })
+			.attr("r",7).attr("fill","grey")
+			.attr("z-index",1);
+
+			var c = [paths[1].source.x , paths[1].source.y]
+			console.log(c);
+
+			
+		});
+
+	</script>
+</body>
+</html>
