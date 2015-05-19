@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>tree layout</title>
+	<script src= "http://d3js.org/d3.v3.min.js"></script>
+</head>
+<body>
+	<script>
+		var canvas = d3.select("body").append("svg")
+		.attr("width",500).attr("height",500).append("g")
+		.attr("transform","translate(100,100)");
+
+		var tree = d3.layout.tree().size([200,200]);
+		var connect = d3.svg.diagonal().projection(function(d){ return [d.y,d.x]; }  );
+		//the projection function above will swap the source and target x and yellow
+		//by default the data looks like return [d.x,d.y];
+		//this will allow for sideways tree with animatin
+		var endpoints = [];
+		
+		var data = {
+					"name":"max",
+					"children": [
+						
+						{"name":"slyvia",
+						"children": [
+							{"name":"booby"},
+							{"name":"shurmda"},
+							{"name":"jonson"}
+						]},
+
+						{"name":"keenan",
+						"children":[
+							{"name":"bill"},
+							{"name":"nye",
+							 "children":[
+								{"name":"jack"},
+								{"name":"bill"},
+								{"name":"mason"}
+							 ]
+							}
+						]}
+
+					]
+
+				}
+			
+		
+		
+		
+		//d3.json("example.json") was removed to allow the data to work locally
+		
+
+			var res = tree(data);
+			var paths = tree.links(res);
+			
+			canvas.selectAll("path").data(paths).enter()
+			.append("path")
+			.attr("d", function(d,i){
+				var p = d;
+				endpoints[i] = p.target;
+				p.target = d.source;
+				
+				return connect(p);
+				
+			})
+			.attr("fill","none")
+			.attr("stroke","black")
+			.transition().duration(300)
+			.delay(function(d,i){
+				return (i+1)*300;
+			})
+			.ease("linear")
+			.attr("d",function(d,i){
+				d.target = endpoints[i];
+				
+				
+				return connect(d);
+			});
+
+
+			canvas.selectAll("node").data(res).enter()
+			.append("circle").attr("class","node")
+			.attr("cx", function(d,i){return res[i].y;})
+			.attr("cy",function(d,i){return res[i].x; })
+			.attr("r",7).attr("fill","grey");
+
+	</script>
+</body>
+</html>
