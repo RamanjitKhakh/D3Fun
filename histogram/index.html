@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>histogram d3</title>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+</head>
+<body>
+	<script>
+		var canvas = d3.select("body").append("svg");
+
+		d3.csv("./content.csv",function(data){
+
+				
+				var ages = data.map(function(i){
+
+						return parseInt(i.age);
+				});
+				console.log(ages);
+
+
+				var histogram = d3.layout.histogram().bins(5)(ages)
+
+				console.log(histogram)
+
+		});
+	</script>
+</body>
+</html>
