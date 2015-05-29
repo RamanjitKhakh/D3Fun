@@ -8,8 +8,8 @@
 <body>
 	<script>
 		var canvas = d3.select("body").append("svg")
-						.attr("width",1000)
-						.attr("height",1000);
+						.attr("width",500)
+						.attr("height",500);
 
 		d3.csv("./content.csv",function(data){
 
@@ -22,14 +22,29 @@
 
 
 				var histogram = d3.layout.histogram().bins(5)(ages)
-
-				console.log(histogram)
+				
+				
+				var yscale = d3.scale.linear()
+								.domain([0, d3.max(
+								histogram.map(function(i){ return i.length})//array of all bin length
+								) ] )
+								.range([0,500]);
+								
+				var xscale = d3.scale.linear()
+								.domain([0,d3.max(ages)])
+								.range([0,500]);
+								
+			
+				console.log(histogram);
+			
 
 				canvas.selectAll("rect").data(histogram).enter().append("rect")
 						.attr("fill","lightsteelblue")
-						.attr("height",function(d){ return d.y * 20})
-						.attr("width",function(d){ return d.dx * 5 })
-						.attr("x", function(d){ return d.x*5});
+						.attr("height",function(d){ return  yscale(d.y);  })
+						.attr("width",function(d){ return  xscale(d.dx) })
+						.attr("x", function(d){ return xscale(d.x) })
+						.attr("y", function(d){return 500-yscale(d.y);});// d.y fed into the scale will 
+						//let us push the rect down and draw the rectangle to the same axis
 						
 						
 				/*
