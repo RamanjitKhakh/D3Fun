@@ -7,7 +7,9 @@
 </head>
 <body>
 	<script>
-		var canvas = d3.select("body").append("svg");
+		var canvas = d3.select("body").append("svg")
+						.attr("width",1000)
+						.attr("height",1000);
 
 		d3.csv("./content.csv",function(data){
 
@@ -23,7 +25,13 @@
 
 				console.log(histogram)
 
-
+				canvas.selectAll("rect").data(histogram).enter().append("rect")
+						.attr("fill","lightsteelblue")
+						.attr("height",function(d){ return d.y * 20})
+						.attr("width",function(d){ return d.dx * 5 })
+						.attr("x", function(d){ return d.x*5});
+						
+						
 				/*
 					0: Array[18]0: 81: 92: 23: 124: 115: 156: 37: 48: 189: 1510: 811: 1312: 1813: 1814: 1515: 716: 717: 1dx: 17.8length: 18x: 1y: 18__proto__: Array[0]
 
