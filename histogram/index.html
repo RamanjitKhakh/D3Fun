@@ -6,7 +6,7 @@
 	<script src="http://d3js.org/d3.v3.min.js"></script>
 </head>
 <body>
-	<script>
+	<script> 
 		var canvas = d3.select("body").append("svg")
 						.attr("width",500)
 						.attr("height",500);
@@ -35,6 +35,12 @@
 								.range([0,500]);
 								
 			
+				var xaxis = d3.svg.axis()
+						.scale(xscale)
+						.orient("bottom");
+				
+				canvas.append("g").call(xaxis);
+				
 				console.log(histogram);
 			
 
