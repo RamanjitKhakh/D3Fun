@@ -39,7 +39,13 @@
 						.scale(xscale)
 						.orient("bottom");
 				
+				var yaxis = d3.svg.axis()
+						.scale(yscale)
+						.orient("left");
+						
+						
 				canvas.append("g").call(xaxis);
+				canvas.append("g").call(yaxis);
 				
 				console.log(histogram);
 			
