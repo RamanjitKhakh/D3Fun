@@ -8,8 +8,10 @@
 <body>
 	<script> 
 		var canvas = d3.select("body").append("svg")
-						.attr("width",500)
-						.attr("height",500);
+						.attr("width",530)
+						.attr("height",530)
+						.append("g")
+						.attr("transform", "translate(50,10)");
 
 		d3.csv("./content.csv",function(data){
 
@@ -44,7 +46,8 @@
 						.orient("left");
 						
 						
-				canvas.append("g").call(xaxis);
+				canvas.append("g").call(xaxis)
+				.attr("transform", "translate(0,500)");
 				canvas.append("g").call(yaxis);
 				
 				
