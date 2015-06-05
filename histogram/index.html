@@ -41,8 +41,14 @@
 						.scale(xscale)
 						.orient("bottom");
 				
+				var invertedY = d3.scale.linear()
+								.domain([0, d3.max(
+								histogram.map(function(i){ return i.length})//array of all bin length
+								) ] )
+								.range([500,0]);
+				
 				var yaxis = d3.svg.axis()
-						.scale(yscale)
+						.scale(invertedY)
 						.orient("left");
 						
 						
