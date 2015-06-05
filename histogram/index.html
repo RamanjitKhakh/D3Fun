@@ -30,7 +30,7 @@
 								.domain([0, d3.max(
 								histogram.map(function(i){ return i.length})//array of all bin length
 								) ] )
-								.range([0,500]);
+								.range([0,450]);
 								
 				var xscale = d3.scale.linear()
 								.domain([0,d3.max(ages)])
@@ -54,6 +54,7 @@
 						
 				canvas.append("g").call(xaxis)
 				.attr("transform", "translate(0,500)");
+				
 				canvas.append("g").call(yaxis);
 				
 				
@@ -64,6 +65,10 @@
 						.attr("height",function(d){ return  yscale(d.y);  })
 						.attr("width",function(d){ return  xscale(d.dx) })
 						.attr("x", function(d){ return xscale(d.x) })
+						.attr("y", 0 )
+						.transition()
+						.duration(function(i){ return 2000; })
+						.ease("bounce")
 						.attr("y", function(d){return 500-yscale(d.y);});// d.y fed into the scale will 
 						//let us push the rect down and draw the rectangle to the same axis
 						
