@@ -60,16 +60,24 @@
 				
 			
 
-				canvas.selectAll("rect").data(histogram).enter().append("rect")
+				var bars = canvas.selectAll("rect").data(histogram).enter().append("rect")
 						.attr("fill","lightsteelblue")
-						.attr("height",function(d){ return  yscale(d.y);  })
+						.attr("height",function(d){ return  0;  })
 						.attr("width",function(d){ return  xscale(d.dx) })
 						.attr("x", function(d){ return xscale(d.x) })
-						.attr("y", 0 )
+						.attr("y", 0 );
+
+				
+
+				bars.transition()
+						.duration(function(d,i){return 1000;})
+						.attr("height", function(d){ return  yscale(d.y);  } )
 						.transition()
-						.duration(function(i){ return 2000; })
+						.duration(function(d,i){ return (i+1)*500; })
 						.ease("bounce")
-						.attr("y", function(d){return 500-yscale(d.y);});// d.y fed into the scale will 
+						.attr("y", function(d){return 500-yscale(d.y);});
+
+						// d.y fed into the scale will 
 						//let us push the rect down and draw the rectangle to the same axis
 						
 						
