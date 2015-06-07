@@ -15,7 +15,9 @@
 
 		d3.csv("./content.csv",function(data){
 
-				
+				var width = 500;
+				var height = 500;
+
 				var ages = data.map(function(i){
 
 						return parseInt(i.age);
@@ -30,11 +32,11 @@
 								.domain([0, d3.max(
 								histogram.map(function(i){ return i.length})//array of all bin length
 								) ] )
-								.range([0,450]);
+								.range([0,height-50]);
 								
 				var xscale = d3.scale.linear()
 								.domain([0,d3.max(ages)])
-								.range([0,500]);
+								.range([0,width]);
 								
 			
 				var xaxis = d3.svg.axis()
@@ -45,7 +47,8 @@
 								.domain([0, d3.max(
 								histogram.map(function(i){ return i.length})//array of all bin length
 								) ] )
-								.range([500,0]);
+								.range([height-50,0]);
+				//invertedY is to reorient the scale
 				
 				var yaxis = d3.svg.axis()
 						.scale(invertedY)
