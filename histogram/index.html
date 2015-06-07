@@ -7,16 +7,17 @@
 </head>
 <body>
 	<script> 
+		var width = 1000;
+		var height = 1000;
 		var canvas = d3.select("body").append("svg")
-						.attr("width",530)
-						.attr("height",530)
+						.attr("width",width+50)
+						.attr("height",height+100)
 						.append("g")
-						.attr("transform", "translate(50,10)");
+						.attr("transform", "translate(40,10)");
 
 		d3.csv("./content.csv",function(data){
 
-				var width = 500;
-				var height = 500;
+				
 
 				var ages = data.map(function(i){
 
@@ -33,7 +34,8 @@
 								histogram.map(function(i){ return i.length})//array of all bin length
 								) ] )
 								.range([0,height-50]);
-								
+								//height -50 added to allow
+								//bounce
 				var xscale = d3.scale.linear()
 								.domain([0,d3.max(ages)])
 								.range([0,width]);
@@ -47,7 +49,7 @@
 								.domain([0, d3.max(
 								histogram.map(function(i){ return i.length})//array of all bin length
 								) ] )
-								.range([height-50,0]);
+								.range([height,0]);
 				//invertedY is to reorient the scale
 				
 				var yaxis = d3.svg.axis()
@@ -56,7 +58,7 @@
 						
 						
 				canvas.append("g").call(xaxis)
-				.attr("transform", "translate(0,500)");
+				.attr("transform", "translate(0,"+height+")");
 				
 				canvas.append("g").call(yaxis);
 				
@@ -78,7 +80,7 @@
 						.transition()
 						.duration(function(d,i){ return (i+1)*500; })
 						.ease("bounce")
-						.attr("y", function(d){return 500-yscale(d.y);});
+						.attr("y", function(d){return height-yscale(d.y);});
 
 						// d.y fed into the scale will 
 						//let us push the rect down and draw the rectangle to the same axis
