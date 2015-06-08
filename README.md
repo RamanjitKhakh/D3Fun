@@ -9,6 +9,8 @@ reactiveload.html is the animated arcs in the "animated arcs.html" file mixed in
 
 treemap uses the tree layout for a map of svg circle elements. The drawing of svg elements is based on the json objects which contain parent child relationships.
 
+histogram folder contains well.... a histogram. The content.csv file is the data set and the histogram contains svg rect elements. The histogram is based on the "age" column of the csv file. This histogram is scalable in both data and actual drawn size. 
+
 Feel free to use any of the content in this repo for your own personal user.
 
 Thank you
